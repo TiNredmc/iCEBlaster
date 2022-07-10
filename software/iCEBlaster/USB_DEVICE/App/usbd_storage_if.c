@@ -131,13 +131,13 @@ const uint8_t ms_fat12[62] = {
 	0xEB, 0x3C, 0x90, // Jump instruction to bootstrap (x86 instruction)
 	0x4D, 0x53, 0x44, 0x4F, 0x53, 0x35, 0x2E, 0x30,// OEM name as "MSDOS5.0"
 	0x00, 0x02,// sector size -> 0x200 = 512 bytes
-	0x01,// 1 Cluster = 1 sector = 512 bytes.
-	0x02, 0x00,// 2 sector reserved (FAT12)
+	0x01,// 1 Sector per cluster.
+	0x01, 0x00,// 1 sector reserved (FAT12)
 	0x02,// number of FATs == 2
 	0x00, 0x02,// 32-byte directory entries in the root directory == 512 bytes
-	0xFF, 0xFF, // total sector of 128 sectors
+	0x00, 0x02, // total sector of 512 sectors
 	0xF8, // Non-removable disk
-	0x01, 0x00,// FAT occupied 1 sector (FAT12)
+	0x01, 0x00,// 1 Sector per FAT (FAT12)
 	0x01, 0x00,// 1 sector per track
 	0x01, 0x00,// 1 (reading?) head (irrelevant)
 	0x00, 0x00, 0x00, 0x00,// No hidden physical sectors.
