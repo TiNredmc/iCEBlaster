@@ -32,7 +32,7 @@
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
-uint8_t reset_flag = 0;
+uint8_t reset_flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,8 +96,9 @@ int main(void)
 		  // Auto USB reconnect.
 		  HAL_Delay(200);
 		  HAL_GPIO_WritePin(USB_EN_GPIO_Port, USB_EN_Pin, 0);
-		  HAL_Delay(20);
+		  HAL_Delay(100);
 		  HAL_GPIO_WritePin(USB_EN_GPIO_Port, USB_EN_Pin, 1);
+		  reset_flag = 0;
 	  }
   }
   /* USER CODE END 3 */
@@ -164,7 +165,7 @@ static void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
@@ -199,7 +200,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_STAT_Pin|USB_EN_Pin|SPI1_CE_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_STAT_Pin|SPI1_CE_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(USB_EN_GPIO_Port, USB_EN_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(CRESET_GPIO_Port, CRESET_Pin, GPIO_PIN_RESET);

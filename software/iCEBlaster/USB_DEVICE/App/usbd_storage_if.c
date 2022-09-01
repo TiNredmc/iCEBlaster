@@ -78,7 +78,7 @@
 #undef STORAGE_BLK_NBR
 #undef STORAGE_BLK_SIZ
 
-#define STORAGE_BLK_NBR                  0xFFFF
+#define STORAGE_BLK_NBR                  0x200
 #define STORAGE_BLK_SIZ                  0x200
 /* USER CODE END PRIVATE_DEFINES */
 
@@ -280,7 +280,7 @@ int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t bl
 			*(buf + 511) = 0x55;
 			break;
 
-	case 4: // Sector 4. Beginning of Volume. Return Volume label
+	case 3: // Sector 3. Beginning of Volume. Return Volume label
 			memcpy(buf, ice_label, 16);
 			//memset(buffer+16, 0x00, 496);// 0s padding
 			break;
@@ -305,6 +305,9 @@ int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t b
 	uint16_t end_addr = 0;
 	uint32_t cnt = 0x1F0000;
 
+	switch(SPIsend_fsm){
+
+	case 0:
 	for(uint16_t i=0; i < 512; i++){// Detect Bitstream preamble
 		if(*(buf+i) == 0x7E){
 			if(*(buf+1+i) == 0xAA){
@@ -330,11 +333,17 @@ int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t b
 						//HAL_Delay(200);// wait for 200ms to let CRAM cleared.
 
 						while(cnt--);// delay ~250ms using while loop. For some reason it's working!
+						HAL_SPI_Transmit(&hspi1, buf, 512, HAL_MAX_DELAY);// SPI TX
+						SPIsend_fsm = 1;
 					}
 				}
 			}
 		}
 	}
+
+	break;
+
+	case 1:
 	// make sure that there's no Bitstream ending before we write from current sector data.
 	// This make sure that we can handle the different Bitstream size that was split into n numbers of 512 bytes sector.
 	end_addr = 512;
@@ -351,12 +360,15 @@ int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t b
 
 	HAL_SPI_Transmit(&hspi1, buf, end_addr, HAL_MAX_DELAY);// SPI TX
 	if(SPIsend_fsm == 0){// This part of code will execute if SPI state machine will go back to 0 (Because we found Bitstream Ending).
-		HAL_SPI_Transmit(&hspi1, (uint8_t *)0, 19, HAL_MAX_DELAY);// Send dummy bytes to kickstart iCE40
+		HAL_SPI_Transmit(&hspi1, dummy, 19, HAL_MAX_DELAY);// Send dummy bytes to kickstart iCE40
 		HAL_GPIO_WritePin(SPI1_CE_GPIO_Port, SPI1_CE_Pin, GPIO_PIN_SET);// Release SPI CE
 		HAL_GPIO_WritePin(LED_STAT_GPIO_Port, LED_STAT_Pin, GPIO_PIN_SET);// turn Status LED on
 		reset_flag = 1;// Code in while loop monitor this flag. When flag goes 1, USB reconnect and clear the flag.
 	}
 
+	break;
+
+	}
   return (USBD_OK);
   /* USER CODE END 7 */
 }
