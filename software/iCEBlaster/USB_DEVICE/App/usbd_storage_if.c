@@ -303,7 +303,7 @@ int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t b
 {
   /* USER CODE BEGIN 7 */
 	uint16_t end_addr = 0;
-	uint32_t cnt = 0x1F0000;
+	uint32_t cnt = 0x1F0FFF;
 
 	switch(SPIsend_fsm){
 
