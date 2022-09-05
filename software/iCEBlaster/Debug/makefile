@@ -64,8 +64,8 @@ all: main-build
 main-build: iCEBlaster.elf secondary-outputs
 
 # Tool invocations
-iCEBlaster.elf iCEBlaster.map: $(OBJS) $(USER_OBJS) C:\Users\thipo\STM32CubeIDE\workspace\iCEBlaster\STM32F042F6PX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "iCEBlaster.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\thipo\STM32CubeIDE\workspace\iCEBlaster\STM32F042F6PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="iCEBlaster.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+iCEBlaster.elf iCEBlaster.map: $(OBJS) $(USER_OBJS) C:\Users\thipo\OneDrive\Documents\DevTLHX\STM32\iCEBlaster\software\iCEBlaster\STM32F042F6PX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "iCEBlaster.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\thipo\OneDrive\Documents\DevTLHX\STM32\iCEBlaster\software\iCEBlaster\STM32F042F6PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="iCEBlaster.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
